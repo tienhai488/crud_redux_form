@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 
+import { connect } from "react-redux";
+import * as action from "../actions";
+
 class TaskForm extends Component {
   state = {
     id: this.props.taskEdit.id || "",
@@ -7,8 +10,7 @@ class TaskForm extends Component {
     status: this.props.taskEdit.status || true,
   };
 
-  handleCancel = () => {
-    this.props.hiddenForm();
+  handleResetState = () => {
     this.setState({
       id: "",
       name: "",
@@ -16,18 +18,20 @@ class TaskForm extends Component {
     });
   };
 
+  handleCancel = () => {
+    this.props.onCloseForm();
+    this.handleResetState();
+  };
+
   handleSave = () => {
     if (this.state.name) {
+      console.log("ON SAVE");
       this.state.id
-        ? this.props.handleEdit(this.state)
-        : this.props.addTodo(this.state);
+        ? this.props.onUpdateTask(this.state)
+        : this.props.onAddTask(this.state);
     }
-    this.props.hiddenForm();
-    this.setState({
-      id: "",
-      name: "",
-      status: true,
-    });
+    this.props.onCloseForm();
+    this.handleResetState();
   };
 
   handleOnChange = (e) => {
@@ -47,11 +51,7 @@ class TaskForm extends Component {
         status: this.props.taskEdit.status || true,
       });
     } else {
-      this.setState({
-        id: "",
-        name: "",
-        status: true,
-      });
+      this.handleResetState();
     }
   }
 
@@ -63,18 +63,12 @@ class TaskForm extends Component {
         status: nextProps.taskEdit.status || true,
       });
     } else {
-      this.setState({
-        id: "",
-        name: "",
-        status: true,
-      });
+      this.handleResetState();
     }
   }
 
   render() {
-    console.log(this.state.id);
-    console.log(this.props.taskEdit);
-    const { hiddenForm } = this.props;
+    const { onCloseForm } = this.props;
     const { name, status } = this.state;
     return (
       <div className="panel panel-warning">
@@ -83,7 +77,7 @@ class TaskForm extends Component {
             {!this.state.id ? "Thêm Công Việc" : "Cập Nhật Công Việc"}
             <span
               className="fa fa-times-circle text-right"
-              onClick={hiddenForm}
+              onClick={onCloseForm}
             ></span>
           </h3>
         </div>
@@ -136,4 +130,29 @@ class TaskForm extends Component {
   }
 }
 
-export default TaskForm;
+const mapStateToProps = (state) => {
+  return {
+    tasks: state.tasks,
+    isDisplayForm: state.isDisplayForm,
+    taskEdit: state.taskEdit,
+  };
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onAddTask: (task) => {
+      dispatch(action.addTask(task));
+    },
+    onCloseForm: () => {
+      dispatch(action.closeForm());
+    },
+    onUpdateTask: (task) => {
+      dispatch(action.updateTask(task));
+    },
+    onUpdateTaskEdit: (task) => {
+      dispatch(action.updateTaskEdit(task));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);

@@ -4,11 +4,10 @@ import TaskSortControl from "./TaskSortControl";
 
 class TaskControl extends Component {
   render() {
-    const { onSearch, sort, handleSort } = this.props;
     return (
       <div className="row mt-15">
-        <TaskSearchControl onSearch={onSearch} />
-        <TaskSortControl sort={sort} handleSort={handleSort} />
+        <TaskSearchControl />
+        <TaskSortControl />
       </div>
     );
   }

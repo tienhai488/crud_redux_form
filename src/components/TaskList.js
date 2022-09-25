@@ -1,7 +1,9 @@
 import { lowerCase } from "lodash";
 import React, { Component } from "react";
 import TaskItem from "./TaskItem";
+
 import { connect } from "react-redux";
+import * as action from "../actions";
 
 class TaskList extends Component {
   state = {
@@ -19,17 +21,8 @@ class TaskList extends Component {
   };
 
   render() {
-    console.log("data redux :", this.props.todos);
-    let {
-      tasks,
-      deleteTodo,
-      toggleStatus,
-      handleTaskEdit,
-      showForm,
-      taskEdit,
-      handleHiddenForm,
-    } = this.props;
     const { filterName, filterStatus } = this.state;
+    let { tasks } = this.props;
 
     tasks = tasks.filter((item) => {
       const str = item.name;
@@ -82,21 +75,8 @@ class TaskList extends Component {
                 </td>
                 <td></td>
               </tr>
-              {/* {elmTasks} */}
               {tasks.map((item, index) => {
-                return (
-                  <TaskItem
-                    key={item.id}
-                    item={item}
-                    index={index}
-                    deleteTodo={deleteTodo}
-                    toggleStatus={toggleStatus}
-                    handleTaskEdit={handleTaskEdit}
-                    showForm={showForm}
-                    taskEdit={taskEdit}
-                    handleHiddenForm={handleHiddenForm}
-                  />
-                );
+                return <TaskItem key={item.id} item={item} index={index} />;
               })}
             </tbody>
           </table>
@@ -108,8 +88,12 @@ class TaskList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    todos: state.tasks,
+    tasks: state.tasks,
   };
 };
 
-export default connect(mapStateToProps, null)(TaskList);
+const mapDispatchToProps = (dispatch, props) => {
+  return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskList);
